@@ -3,7 +3,25 @@
 Parse 馬雅全書.txt and split into individual chapter Markdown files
 for the Astro/Starlight website.
 """
-import re, os, unicodedata
+import re, os, unicodedata, sys
+
+# Ensure UTF-8 output
+sys.stdout.reconfigure(encoding='utf-8') if hasattr(sys.stdout, 'reconfigure') else None
+
+SRC = '/Users/kennethlin/Desktop/maya/馬雅全書.txt'
+OUT_BASE = '/Users/kennethlin/history-sharing/src/content/docs/馬雅文化/馬雅全書'
+
+def sanitize_path(text):
+    """Remove special chars, keep Chinese, letters, digits, spaces and hyphens"""
+    # Replace Chinese/special punctuation with hyphen
+    text = re.sub(r'[、，。·：\u2014\u2013\u3001\u3002\uff0c\uff1a\u00b7]+', '-', text)
+    # Remove anything not Chinese, alphanumeric, space, or hyphen
+    text = re.sub(r'[^\u4e00-\u9fff\w\s\-]', '', text)
+    # Collapse multiple hyphens
+    text = re.sub(r'-+', '-', text)
+    # Replace spaces with hyphens
+    text = re.sub(r'\s+', '-', text)
+    return text.strip('-')
 
 SRC = '/Users/kennethlin/Desktop/maya/馬雅全書.txt'
 OUT_BASE = '/Users/kennethlin/history-sharing/src/content/docs/馬雅文化/馬雅全書'
@@ -45,7 +63,7 @@ def slugify(text):
 
 def safe_filename(name):
     """Make a safe filename, removing problematic chars"""
-    name = name.replace('/', '／').replace(':', '：').strip()
+    name = sanitize_path(name)
     return name[:80]
 
 def write_chapter(vol_name, chap_num, chap_title, chap_lines, dynasty_info=None):
@@ -59,7 +77,7 @@ def write_chapter(vol_name, chap_num, chap_title, chap_lines, dynasty_info=None)
     
     # Create volume subdirectory
     vol_slug = f"{vol_name.split('·')[0].strip()}-{vol_name.split('·')[-1].strip()}" if '·' in vol_name else vol_name
-    vol_slug = re.sub(r'\s+', '', vol_slug)[:30]
+    vol_slug = sanitize_path(vol_slug)[:30]
     
     vol_dir = os.path.join(OUT_BASE, vol_slug)
     os.makedirs(vol_dir, exist_ok=True)
