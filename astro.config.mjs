@@ -12,19 +12,25 @@ export default defineConfig({
           lang: 'zh-TW',
         },
       },
-      social: {},
+      social: [],
       sidebar: [
         {
           label: '馬雅文化',
-          autogenerate: { directory: '馬雅文化' },
+          items: [
+            { autogenerate: { directory: '馬雅文化' } },
+          ],
         },
         {
           label: '墨西哥歷史',
-          autogenerate: { directory: '墨西哥歷史' },
+          items: [
+            { autogenerate: { directory: '墨西哥歷史' } },
+          ],
         },
         {
           label: '中美洲歷史',
-          autogenerate: { directory: '中美洲歷史' },
+          items: [
+            { autogenerate: { directory: '中美洲歷史' } },
+          ],
         },
       ],
     }),
