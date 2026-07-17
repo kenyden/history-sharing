@@ -13,6 +13,7 @@ export default defineConfig({
         },
       },
       social: [],
+      tableOfContents: false,
       sidebar: [
         {
           label: '文明的平行與岔路',
